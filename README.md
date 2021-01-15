@@ -1,2 +1,3 @@
-# python-project-template
-A template for starting a Python based project
+# oomi
+
+Parse electricity usage data from the Finnish energy company Oomi.
