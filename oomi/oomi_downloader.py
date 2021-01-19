@@ -7,7 +7,7 @@ import requests
 import pandas as pd
 
 
-class OomiConfig:
+class OomiConfig:  # pylint: disable=too-few-public-methods
     """URL's needed for downloading data."""
 
     OOMI_NO_AUTH_PAGE = "https://online.oomi.fi/eServices/Online/IndexNoAuth"
