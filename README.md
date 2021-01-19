@@ -1,3 +1,3 @@
 # oomi
 
-Parse electricity usage data from the Finnish energy company Oomi.
+Download electricity usage data from the Finnish energy company [https://oomi.fi/](Oomi).
