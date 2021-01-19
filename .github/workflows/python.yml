@@ -1,34 +1,36 @@
-name: python-project-template
+name: Oomi
 
 on:
   pull_request:
-    branches: 
+    branches:
+      - master
+  push:
+    branches:
       - master
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1
-    - name: Set up Python 3.7
-      uses: actions/setup-python@v1
-      with:
-        python-version: 3.7
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip setuptools wheel
-        pip install -r requirements.txt
-    - name: Lint with black
-      run: |
-        pip install black
-        black --check .
-    - name: Test with pytest
-      run: |
-        pip install pytest
-        pytest
-    - name: Check with pylint
-      run: |
-        pip install pylint
-        pylint package_template
+      - uses: actions/checkout@v1
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.9
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install -r requirements.txt
+      - name: Lint with black
+        run: |
+          pip install black
+          black --check .
+      - name: Test with pytest
+        run: |
+          pip install pytest
+          pytest
+      - name: Check with pylint
+        run: |
+          pip install pylint
+          pylint oomi
