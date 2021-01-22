@@ -38,10 +38,11 @@ class Firestore(Database):
         return dataframe
 
 
+# pylint: disable=invalid-name
 def main():
     """Run a simple test with firestore."""
     config = FirestoreConfig()
-    config.COLLECTION = "test"  # pylint: disable=invalid-name
+    config.COLLECTION = "test"
     client = Firestore(config=config)
     tz = config.TIMEZONE
     data = pd.DataFrame.from_records(
