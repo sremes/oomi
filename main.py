@@ -18,12 +18,12 @@ def update_firestore(event: dict, context: dict) -> None:
     """
     print(f"This Function was triggered by messageId {context.event_id} published at {context.timestamp}")
 
-    print(event.__dict__)
+    print(f"Event: {event}")
 
     if False is None:
         # get data
         downloader = OomiDownloader(
-            OomiConfig(), username=os.environ.get("OOMI_USER"), password=os.environ.get("OOMI_PASSWORD")
+            config=OomiConfig(), username=os.environ.get("OOMI_USER"), password=os.environ.get("OOMI_PASSWORD")
         )
         data_frame = downloader.get_consumption("2021-01-01", "2021-01-02")
 
