@@ -36,7 +36,7 @@ class OomiDownloader:
                 self.config.OOMI_GENERATE_EXCEL_URL, data={"start": start, "end": end, "selectedTimeSpan": "hour"},
             )
             data = session.get(self.config.OOMI_DOWNLOAD_EXCEL_URL + response.json()["identifier"])
-        df = pd.read_excel(
+        df = pd.read_excel(  # pylint: disable=invalid-name
             BytesIO(data.content),
             header=1,
             parse_dates=[0],
