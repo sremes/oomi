@@ -36,9 +36,19 @@ class OomiDownloader:
                 self.config.OOMI_GENERATE_EXCEL_URL, data={"start": start, "end": end, "selectedTimeSpan": "hour"},
             )
             data = session.get(self.config.OOMI_DOWNLOAD_EXCEL_URL + response.json()["identifier"])
-        return pd.read_excel(BytesIO(data.content))
+        df = pd.read_excel(  # pylint: disable=invalid-name
+            BytesIO(data.content),
+            header=1,
+            parse_dates=[0],
+            date_parser=lambda x: pd.to_datetime(x, format="%d.%m.%Y %H.%M"),
+        )
+        # parse column name that contains the address
+        location = ", ".join(s.strip() for s in df.columns[1].split("\n"))
+        df.columns = ["time", "consumption"]  # rename columns
+        df["location"] = location  # add new column
+        return df
 
-    def login_to_oomi(self, session: requests.Session):
+    def login_to_oomi(self, session: requests.Session) -> None:
         """Log-in to Oomi inside the given session."""
         response = session.get(self.config.OOMI_NO_AUTH_PAGE)
         match = re.search(self.config.OOMI_VERIFICATION_TOKEN_REGEX, response.text)
