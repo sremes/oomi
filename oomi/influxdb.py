@@ -39,12 +39,14 @@ class Influxdb(Database):
 
     def download_data(self) -> pd.DataFrame:
         """Query written data."""
-        query = f'from(bucket: "{self.config.BUCKET}") |> range(start: -7d) |> filter(fn: (r) => r._measurement == "hourly_consumption")'
+        query = f'from(bucket: "{self.config.BUCKET}") |> range(start: -7d) |> filter(fn: (r) => r._measurement == "hourly_consumption")'  # pylint: disable=line-too-long
         print(f'Querying from InfluxDB: "{query}" ...')
 
         query_api = self.client.query_api()
-        df = query_api.query_data_frame(query=query)
-        print(df)
+        data_frame = query_api.query_data_frame(query=query)
+        data_frame["time"] = data_frame["_time"].dt.tz_convert(self.config.TIMEZONE)
+        data_frame["consumption"] = data_frame["_value"]
+        return data_frame[["time", "location", "consumption"]]
 
     def upload_data(self, data: pd.DataFrame) -> None:
         with self.client.write_api(write_options=SYNCHRONOUS) as write_api:
@@ -56,7 +58,7 @@ class Influxdb(Database):
                     .field("consumption", consumption)
                     .time(time=time)
                 )
-                write_api.write(bucket=self.config.bucket, record=record)
+                write_api.write(bucket=self.config.BUCKET, record=record)
 
 
 # pylint: disable=invalid-name
@@ -64,12 +66,14 @@ def main():
     """Run a simple test with influxdb."""
     config = InfluxDBConfig()
     config.BUCKET = "oomi-test"
+    assert (
+        os.environ.get("INFLUXDB_V2_URL") and os.environ.get("INFLUXDB_V2_ORG") and os.environ.get("INFLUXDB_V2_TOKEN")
+    )
     client = Influxdb(config=config)
-    tz = config.TIMEZONE
     data = pd.DataFrame.from_records(
         [
-            {"time": tz.localize(datetime(2021, 1, 1)), "consumption": 69, "location": "TEST"},
-            {"time": tz.localize(datetime(2021, 1, 2)), "consumption": 42, "location": "TEST"},
+            {"time": datetime(2021, 5, 17), "consumption": 69, "location": "TEST"},
+            {"time": datetime(2021, 5, 18), "consumption": 42, "location": "TEST"},
         ]
     )
     client.upload_data(data)
