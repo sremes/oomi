@@ -38,8 +38,8 @@ class OomiDownloader:
             data = session.get(self.config.OOMI_DOWNLOAD_EXCEL_URL + response.json()["identifier"])
         df = pd.read_excel(  # pylint: disable=invalid-name
             BytesIO(data.content),
-            header=1,
-            parse_dates=[0],
+            header=2,  # there is a text header, then an empty line, then table headers on third line (2)
+            parse_dates=[0],  # datetimes in first column
             date_parser=lambda x: pd.to_datetime(x, format="%d.%m.%Y %H.%M"),
         )
         # parse column name that contains the address
