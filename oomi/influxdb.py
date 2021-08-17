@@ -55,7 +55,7 @@ class Influxdb(Database):
                 record = (
                     Point("hourly_consumption")
                     .tag("location", location)
-                    .field("consumption", consumption)
+                    .field("consumption", float(consumption))
                     .time(time=time)
                 )
                 write_api.write(bucket=self.config.BUCKET, record=record)
