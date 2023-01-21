@@ -55,7 +55,7 @@ class OomiDownloader:
         if match is not None:
             verification_token = match.group()
         else:
-            raise ValueError("Request verification token not found!")
+            raise RuntimeError(f"Request verification token not found:\n {response.text}")
         _ = session.post(
             self.config.OOMI_LOGIN_URL,
             data={
